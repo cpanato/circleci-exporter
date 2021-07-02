@@ -14,3 +14,6 @@ circleci_exporter
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+/.build/darwin-amd64/circleci-exporter
+/.build/linux-amd64/circleci-exporter
+/.build/linux-arm64/circleci-exporter

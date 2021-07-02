@@ -4,8 +4,8 @@ FROM quay.io/prometheus/busybox:latest
 
 ARG ARCH="amd64"
 ARG OS="linux"
-COPY .build/${OS}-${ARCH}/circleci_actions_exporter /bin/circleci_actions_exporter
+COPY .build/${OS}-${ARCH}/circleci-exporter /bin/circleci-exporter
 
 USER nobody
-ENTRYPOINT ["/bin/circleci_actions_exporter"]
+ENTRYPOINT ["/bin/circleci-exporter"]
 EXPOSE     9101
