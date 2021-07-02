@@ -1,4 +1,4 @@
-circleci_exporter
+circleci-exporter
 *.env
 *.tar.gz
 

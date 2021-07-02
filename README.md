@@ -33,7 +33,7 @@ $ make build
 ## Run the binary
 
 ```shell
-$ ./circleci_exporter --gh.circleci-token="CIRCLECI_TOKEN" --gh.circleci-org="Honk-org" --gh.circleci-projects="My_Project_1" --gh.circleci-projects="My_Project_2"
+$ ./circleci-exporter --gh.circleci-token="CIRCLECI_TOKEN" --gh.circleci-org="Honk-org" --gh.circleci-projects="My_Project_1" --gh.circleci-projects="My_Project_2"
 ```
 
 ## Docker
@@ -43,9 +43,9 @@ You can deploy this exporter using the [ghcr.io/cpanato/github_actions_exporter-
 For example:
 
 ```shell
-$ docker pull ghcr.io/cpanato/circleci_exporter-linux-amd64:v0.1.0
+$ docker pull ghcr.io/cpanato/circleci-exporter:v0.1.0
 
-$ docker run -d -p 9101:9101 ghcr.io/cpanato/circleci_exporter-linux-amd64:v0.1.0  --gh.circleci-token="CIRCLECI_TOKEN" --gh.circleci-org="Honk-org" --gh.circleci-projects="My_Project_1" --gh.circleci-projects="My_Project_2"
+$ docker run -d -p 9101:9101 ghcr.io/cpanato/circleci_exporter:v0.1.0  --gh.circleci-token="CIRCLECI_TOKEN" --gh.circleci-org="Honk-org" --gh.circleci-projects="My_Project_1" --gh.circleci-projects="My_Project_2"
 ```
 
 ## Testing
