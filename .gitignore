@@ -16,3 +16,4 @@ circleci-exporter
 *.out
 .build/**
 dist/**
+release/cosign.key
