@@ -1,4 +1,8 @@
 project_name: circleci-exporter
+
+snapshot:
+  name_template: '{{ .Tag }}-SNAPSHOT'
+
 builds:
   - binary: circleci-exporter
     goos:
@@ -19,7 +23,6 @@ builds:
 
 archives:
   - format: binary
-    name_template: "{{ .Binary }}"
     allow_different_binary_count: true
 
 checksum:
