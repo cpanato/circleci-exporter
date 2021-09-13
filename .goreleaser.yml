@@ -1,0 +1,74 @@
+project_name: circleci-exporter
+builds:
+  - binary: circleci-exporter
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+      - ppc64
+      - ppc64le
+    ldflags: |
+        -X github.com/prometheus/common/version.Version={{.Version}}
+        -X github.com/prometheus/common/version.Revision={{.Commit}}
+        -X github.com/prometheus/common/version.Branch={{.Branch}}
+        -X github.com/prometheus/common/version.BuildUser=cpanato
+        -X github.com/prometheus/common/version.BuildDate={{.Date}}
+
+archives:
+  - format: binary
+    name_template: "{{ .Binary }}"
+    allow_different_binary_count: true
+
+checksum:
+  name_template: checksums.txt
+
+signs:
+  - signature: "${artifact}.sig"
+    cmd: cosign
+    args: ["sign-blob", "-output", "${artifact}.sig", "-key", "./release/cosign.key", "${artifact}"]
+    artifacts: binary
+    stdin: '{{ .Env.COSIGN_PASSWORD }}'
+
+dockers:
+  - image_templates:
+      - "ghcr.io/cpanato/{{ .ProjectName }}:{{ .Version }}-amd64"
+    use: buildx
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.source=https://github.com/cpanato/{{ .ProjectName }}
+  - image_templates:
+      - "ghcr.io/cpanato/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+    use: buildx
+    goarch: arm64
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.source=https://github.com/cpanato/{{ .ProjectName }}
+
+docker_manifests:
+  - name_template: ghcr.io/cpanato/{{ .ProjectName }}:{{ .Version }}
+    image_templates:
+      - ghcr.io/cpanato/{{ .ProjectName }}:{{ .Version }}-amd64
+      - ghcr.io/cpanato/{{ .ProjectName }}:{{ .Version }}-arm64v8
+
+docker_signs:
+  - artifacts: all
+    args: [ "sign", "-key", "./release/cosign.key", "${artifact}" ]
+    stdin: '{{ .Env.COSIGN_PASSWORD }}'
+
+release:
+  github:
+    owner: cpanato
+    name: circleci-exporter
+  draft: false
+  prerelease: true
+  extra_files:
+    - glob: release/cosign.pub
