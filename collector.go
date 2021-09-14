@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/mattermost/go-circleci"
 	"github.com/prometheus/client_golang/prometheus"
@@ -52,11 +54,13 @@ func (c *CircleCIExporter) Collect(ch chan<- prometheus.Metric) {
 	if *circleCIVCSSlug == "bitbucket" || *circleCIVCSSlug == "bb" {
 		slug = circleci.VcsTypeBitbucket
 	}
+
 	for _, project := range *circleCIProjects {
+		level.Info(c.Logger).Log("msg", fmt.Sprintf("collecting metrics for project %s", project), "org", *circleCIOrg)
 		insights, err := c.CCClient.GetSummaryMetricsProjects(slug, *circleCIOrg, project, "", "", "last-24-hours", true)
 		if err != nil {
-			level.Error(c.Logger).Log("msg", err.Error())
-			return
+			level.Error(c.Logger).Log("msg", err.Error(), "org", *circleCIOrg, "project", project)
+			continue
 		}
 		for _, insight := range insights.Items {
 			TotalSuccessRunCounterVec.WithLabelValues(*circleCIOrg, project, insight.Name).Set(float64(insight.Metrics.SuccessfulRuns))

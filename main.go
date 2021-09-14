@@ -58,6 +58,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	level.Info(logger).Log("msg", fmt.Sprintf("projects to watch %s", strings.Join(*circleCIProjects, ",")))
+
 	cci, err := NewCircleCIExporter(logger)
 	if err != nil {
 		level.Error(logger).Log("msg", "failed to create the CircleCI client")
@@ -151,6 +153,10 @@ func validateFlags(token, org, vcsSlug string, projects []string) error {
 
 	if org == "" {
 		return errors.New("Please configure the CircleCI organization")
+	}
+
+	if len(projects) == 0 {
+		return errors.New("Please configure the CircleCI projects to track")
 	}
 
 	slugs := []string{"github", "gh", "bb", "bitbucket"}
