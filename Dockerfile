@@ -1,4 +1,4 @@
-FROM quay.io/prometheus/busybox:latest
+FROM ghcr.io/distroless/busybox:latest
 
 COPY circleci-exporter /bin/circleci-exporter
 

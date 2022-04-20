@@ -1,6 +1,6 @@
 module github.com/cpanato/circleci-exporter
 
-go 1.17
+go 1.18
 
 require (
 	github.com/go-kit/kit v0.11.0
