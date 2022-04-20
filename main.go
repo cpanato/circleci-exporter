@@ -28,8 +28,6 @@ var (
 	circleCIOrg      = kingpin.Flag("gh.circleci-org", "CircleCI Organization.").Default("").String()
 	circleCIVCSSlug  = kingpin.Flag("gh.circleci-vcs-slug", "CircleCI VCS Type (gh/bitbucket).").Default("github").String()
 	circleCIProjects = kingpin.Flag("gh.circleci-projects", "CircleCI projects to track.").Default("").Strings()
-
-	vcsSlug circleci.VcsType
 )
 
 // CircleCIExporter struct to hold some information
@@ -50,19 +48,19 @@ func main() {
 	kingpin.Parse()
 	logger := promlog.New(promlogConfig)
 
-	level.Info(logger).Log("msg", "Starting circleci_exporter", "version", version.Info())
-	level.Info(logger).Log("build_context", version.BuildContext())
+	_ = level.Info(logger).Log("msg", "Starting circleci_exporter", "version", version.Info())
+	_ = level.Info(logger).Log("build_context", version.BuildContext())
 
 	if err := validateFlags(*circleCIToken, *circleCIOrg, *circleCIVCSSlug, *circleCIProjects); err != nil {
-		level.Error(logger).Log("msg", "Missing configure flags", "err", err)
+		_ = level.Error(logger).Log("msg", "Missing configure flags", "err", err)
 		os.Exit(1)
 	}
 
-	level.Info(logger).Log("msg", fmt.Sprintf("projects to watch %s", strings.Join(*circleCIProjects, ",")))
+	_ = level.Info(logger).Log("msg", fmt.Sprintf("projects to watch %s", strings.Join(*circleCIProjects, ",")))
 
 	cci, err := NewCircleCIExporter(logger)
 	if err != nil {
-		level.Error(logger).Log("msg", "failed to create the CircleCI client")
+		_ = level.Error(logger).Log("msg", "failed to create the CircleCI client")
 		os.Exit(2)
 	}
 
@@ -73,17 +71,17 @@ func main() {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		level.Info(logger).Log("msg", fmt.Sprintf("Signal received: %v. Exiting...", <-signalChan))
+		_ = level.Info(logger).Log("msg", fmt.Sprintf("Signal received: %v. Exiting...", <-signalChan))
 		err := srv.Close()
 		if err != nil {
-			level.Error(logger).Log("msg", "Error occurred while closing the server", "err", err)
+			_ = level.Error(logger).Log("msg", "Error occurred while closing the server", "err", err)
 		}
 		os.Exit(0)
 	}()
 
 	http.Handle(*metricsPath, promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<html>
+		_, _ = w.Write([]byte(`<html>
 <head><title>CircleCI Exporter</title></head>
 <body>
 <h1>CircleCI Exporter</h1>
@@ -96,13 +94,13 @@ func main() {
 
 	listener, err := getListener(*listenAddress, logger)
 	if err != nil {
-		level.Error(logger).Log("msg", "Could not create listener", "err", err)
+		_ = level.Error(logger).Log("msg", "Could not create listener", "err", err)
 		os.Exit(1)
 	}
 
-	level.Info(logger).Log("msg", "CircleCI Prometheus Exporter has successfully started")
+	_ = level.Info(logger).Log("msg", "CircleCI Prometheus Exporter has successfully started")
 	if err := srv.Serve(listener); err != nil {
-		level.Error(logger).Log("msg", "Error starting HTTP server", "err", err)
+		_ = level.Error(logger).Log("msg", "Error starting HTTP server", "err", err)
 		os.Exit(1)
 	}
 }
@@ -114,7 +112,7 @@ func getListener(listenAddress string, logger log.Logger) (net.Listener, error) 
 	if strings.HasPrefix(listenAddress, "unix:") {
 		path, _, pathError := parseUnixSocketAddress(listenAddress)
 		if pathError != nil {
-			return listener, fmt.Errorf("parsing unix domain socket listen address %s failed: %v", listenAddress, pathError)
+			return listener, fmt.Errorf("parsing unix domain socket listen address %s failed: %w", listenAddress, pathError)
 		}
 		listener, err = net.ListenUnix("unix", &net.UnixAddr{Name: path, Net: "unix"})
 	} else {
@@ -125,7 +123,7 @@ func getListener(listenAddress string, logger log.Logger) (net.Listener, error) 
 		return listener, err
 	}
 
-	level.Info(logger).Log("msg", fmt.Sprintf("Listening on %s", listenAddress))
+	_ = level.Info(logger).Log("msg", fmt.Sprintf("Listening on %s", listenAddress))
 	return listener, nil
 }
 
@@ -161,22 +159,16 @@ func validateFlags(token, org, vcsSlug string, projects []string) error {
 
 	slugs := []string{"github", "gh", "bb", "bitbucket"}
 	if vcsSlug == "" {
-		return errors.New("Please configure the CircleCI VCS slug, that can be github or bitbucket.")
+		return errors.New("please configure the CircleCI VCS slug, that can be github or bitbucket")
 	}
 
-	found := false
 	for _, slug := range slugs {
 		if slug == vcsSlug {
-			found = true
 			return nil
 		}
 	}
 
-	if !found {
-		return errors.New(fmt.Sprintf("CircleCI VCS slug %s is invalid, it only accept those: %s", vcsSlug, strings.Join(slugs, ", ")))
-	}
-
-	return nil
+	return fmt.Errorf("circleci VCS slug %s is invalid, it only accept those: %s", vcsSlug, strings.Join(slugs, ", "))
 }
 
 func NewCircleCIExporter(logger log.Logger) (*CircleCIExporter, error) {

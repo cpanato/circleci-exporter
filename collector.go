@@ -39,7 +39,7 @@ var (
 )
 
 func init() {
-	//Register metrics with prometheus
+	// Register metrics with prometheus
 	prometheus.MustRegister(TotalRunCounterVec)
 	prometheus.MustRegister(TotalSuccessRunCounterVec)
 	prometheus.MustRegister(TotalFailedRunCounterVec)
@@ -47,19 +47,20 @@ func init() {
 }
 
 func (cci *CircleCIExporter) Describe(ch chan<- *prometheus.Desc) {
+	// noop
 }
 
-func (c *CircleCIExporter) Collect(ch chan<- prometheus.Metric) {
+func (cci *CircleCIExporter) Collect(ch chan<- prometheus.Metric) {
 	slug := circleci.VcsTypeGithub
 	if *circleCIVCSSlug == "bitbucket" || *circleCIVCSSlug == "bb" {
 		slug = circleci.VcsTypeBitbucket
 	}
 
 	for _, project := range *circleCIProjects {
-		level.Info(c.Logger).Log("msg", fmt.Sprintf("collecting metrics for project %s", project), "org", *circleCIOrg)
-		insights, err := c.CCClient.GetSummaryMetricsProjects(slug, *circleCIOrg, project, "", "", "last-24-hours", true)
+		_ = level.Info(cci.Logger).Log("msg", fmt.Sprintf("collecting metrics for project %s", project), "org", *circleCIOrg)
+		insights, err := cci.CCClient.GetSummaryMetricsProjects(slug, *circleCIOrg, project, "", "", "last-24-hours", true)
 		if err != nil {
-			level.Error(c.Logger).Log("msg", err.Error(), "org", *circleCIOrg, "project", project)
+			_ = level.Error(cci.Logger).Log("msg", err.Error(), "org", *circleCIOrg, "project", project)
 			continue
 		}
 		for _, insight := range insights.Items {
