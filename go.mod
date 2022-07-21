@@ -7,7 +7,7 @@ require (
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/mattermost/go-circleci v0.7.1
 	github.com/prometheus/client_golang v1.12.2
-	github.com/prometheus/common v0.35.0
+	github.com/prometheus/common v0.37.0
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
