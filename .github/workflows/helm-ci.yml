@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
 
-      - uses: sigstore/cosign-installer@09a077b27eb1310dcfb21981bee195b30ce09de0 # pin@v2.2.0
+      - uses: sigstore/cosign-installer@b3413d484cc23cf8778c3d2aa361568d4eb54679 # pin@v2.2.0
 
       - name: Set up Helm
         uses: azure/setup-helm@b5b231a831f96336bbfeccc1329990f0005c5bb1 # pin@v1.1
