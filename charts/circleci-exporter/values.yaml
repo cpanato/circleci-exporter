@@ -4,12 +4,8 @@
 
 config:
   circleciToken: ""
-  org: mattermost
-  projects:
-    - enterprise
-    - mattermost-server
-    - mattermost-webapp
-    - desktop
+  org: "cpanato"
+  projects: {}
 
 replicaCount: 1
 
@@ -27,7 +23,7 @@ service:
 
 prometheus:
   serviceMonitor:
-    enabled: true
+    enabled: false
     namespace: monitoring
     interval: "5m"
     scrapeTimeout: 2m
