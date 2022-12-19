@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log/level"
 	"github.com/mattermost/go-circleci"
 	"github.com/prometheus/client_golang/prometheus"
 )
