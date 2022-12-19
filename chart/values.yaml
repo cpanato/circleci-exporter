@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 config:
-  circleciToken: a329c2db671862b92735c411c0210b0f551b12b4
+  circleciToken: ""
   org: mattermost
   projects:
     - enterprise
@@ -15,7 +15,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/cpanato/circleci-exporter
-  tag: 0.2.0
+  tag: 0.4.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
