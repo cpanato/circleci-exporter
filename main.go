@@ -9,9 +9,10 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/mattermost/go-circleci"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -66,7 +67,13 @@ func main() {
 
 	prometheus.MustRegister(cci)
 
-	srv := http.Server{}
+	srv := http.Server{
+		// Timeouts
+		ReadTimeout:       60 * time.Second,
+		ReadHeaderTimeout: 60 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
@@ -146,15 +153,15 @@ func parseUnixSocketAddress(address string) (string, string, error) {
 
 func validateFlags(token, org, vcsSlug string, projects []string) error {
 	if token == "" {
-		return errors.New("Please configure the CircleCI Token")
+		return errors.New("please configure the CircleCI Token")
 	}
 
 	if org == "" {
-		return errors.New("Please configure the CircleCI organization")
+		return errors.New("please configure the CircleCI organization")
 	}
 
 	if len(projects) == 0 {
-		return errors.New("Please configure the CircleCI projects to track")
+		return errors.New("please configure the CircleCI projects to track")
 	}
 
 	slugs := []string{"github", "gh", "bb", "bitbucket"}

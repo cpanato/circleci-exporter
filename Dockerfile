@@ -1,4 +1,4 @@
-FROM ghcr.io/distroless/busybox:latest
+FROM cgr.dev/chainguard/busybox:latest
 
 COPY circleci-exporter /bin/circleci-exporter
 
