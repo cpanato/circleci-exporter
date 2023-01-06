@@ -3,19 +3,15 @@
 # Declare variables to be passed into your templates.
 
 config:
-  circleciToken: a329c2db671862b92735c411c0210b0f551b12b4
-  org: mattermost
-  projects:
-    - enterprise
-    - mattermost-server
-    - mattermost-webapp
-    - desktop
+  circleciToken: ""
+  org: "cpanato"
+  projects: {}
 
 replicaCount: 1
 
 image:
   repository: ghcr.io/cpanato/circleci-exporter
-  tag: 0.2.0
+  tag: 0.4.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -27,7 +23,7 @@ service:
 
 prometheus:
   serviceMonitor:
-    enabled: true
+    enabled: false
     namespace: monitoring
     interval: "5m"
     scrapeTimeout: 2m
