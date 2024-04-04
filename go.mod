@@ -6,7 +6,7 @@ require (
 	github.com/mattermost/go-circleci v0.7.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.40.0
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
 
